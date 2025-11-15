@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lapor Harga - Prediksi Harga Komoditas Indonesia</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <span>Komoditas Indonesia</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="kontrak.html">Kontrak Digital</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="lapor.html">Lapor Harga</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-5">
+        <div class="container py-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="display-5 fw-bold">Lapor Harga Komoditas</h1>
+                    <p class="lead">Bantu kami mengumpulkan data harga komoditas di wilayah Anda</p>
+                </div>
+            </div>
+
+            <!-- Notification Alert -->
+            <div id="notification" class="alert alert-success alert-dismissible fade d-none" role="alert">
+                <strong>Terima kasih!</strong> Data harga Anda telah berhasil dikirim.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Price Report Form -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Formulir Laporan Harga</h5>
+                            <form id="priceReportForm">
+                                <div class="mb-3">
+                                    <label for="reportCommodity" class="form-label">Jenis Komoditas</label>
+                                    <select class="form-select" id="reportCommodity" required>
+                                        <option value="" selected disabled>Pilih Komoditas</option>
+                                        <option value="beras">Beras</option>
+                                        <option value="cabai">Cabai</option>
+                                        <option value="bawang">Bawang Merah</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reportLocation" class="form-label">Lokasi (Kota/Kecamatan)</label>
+                                    <input type="text" class="form-control" id="reportLocation" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reportPrice" class="form-label">Harga Aktual (Rp/kg)</label>
+                                    <input type="number" class="form-control" id="reportPrice" min="1" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reportDate" class="form-label">Tanggal</label>
+                                    <input type="date" class="form-control" id="reportDate" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Kirim Laporan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Tentang Laporan Harga</h5>
+                            <p>Data harga yang Anda laporkan akan membantu kami meningkatkan akurasi prediksi harga komoditas di seluruh Indonesia.</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Data Anda anonim dan aman</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Membantu petani dan distributor</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Meningkatkan transparansi harga</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Reports Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="card-title mb-0">Daftar Laporan Harga</h5>
+                                <button id="deleteAllReports" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash me-2"></i>Hapus Semua Laporan
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Komoditas</th>
+                                            <th>Lokasi</th>
+                                            <th>Harga (Rp/kg)</th>
+                                            <th>Tanggal</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="priceReportsTable">
+                                        <!-- Reports will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                                <div id="noReportsMessage" class="text-center py-4 text-muted">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <p>Belum ada laporan harga</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Komoditas Indonesia</h5>
+                    <p>Sistem prediksi harga komoditas pertanian Indonesia</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2023 Komoditas Indonesia. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="lapor.js"></script>
+</body>
+</html>
