@@ -3,161 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Komoditas - Prediksi Harga Komoditas Indonesia</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <title>Dashboard - AgroPrediksi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Header Navbar -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="index.html">
-                    <i class="fas fa-chart-line me-2"></i>
-                    <span>Komoditas Indonesia</span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Beranda</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="dashboard.html">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="kontrak.html">Kontrak Digital</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="lapor.html">Lapor Harga</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main class="pt-5">
-        <div class="container py-4">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="display-5 fw-bold">Dashboard Komoditas</h1>
-                    <p class="lead">Analisis dan prediksi harga komoditas pertanian Indonesia</p>
-                </div>
-            </div>
-
-            <!-- Commodity Selector -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <label for="commoditySelect" class="form-label fw-bold">Pilih Komoditas:</label>
-                                    <select class="form-select" id="commoditySelect">
-                                        <option value="beras">Beras</option>
-                                        <option value="cabai">Cabai</option>
-                                        <option value="bawang">Bawang Merah</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mt-3 mt-md-0">
-                                    <button id="downloadData" class="btn btn-success">
-                                        <i class="fas fa-download me-2"></i>Unduh Data
-                                    </button>
-                                    <a href="index.html" class="btn btn-outline-primary ms-2">
-                                        <i class="fas fa-home me-2"></i>Kembali ke Beranda
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Commodity Information -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-sun text-warning fa-3x mb-3"></i>
-                            <h5 class="card-title">Faktor Cuaca</h5>
-                            <p id="weatherFactor" class="card-text">Cerah dengan suhu rata-rata 28°C</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-warehouse text-info fa-3x mb-3"></i>
-                            <h5 class="card-title">Stok Gudang</h5>
-                            <p id="stockFactor" class="card-text">Stok mencukupi untuk 2 bulan ke depan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-truck text-success fa-3x mb-3"></i>
-                            <h5 class="card-title">Volume Distribusi</h5>
-                            <p id="distributionFactor" class="card-text">Distribusi normal ke seluruh wilayah</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Prediksi Harga 30 Hari ke Depan</h5>
-                            <canvas id="predictionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Data Historis 30 Hari Terakhir</h5>
-                            <canvas id="historicalChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">🌾 AgroPrediksi</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Utama</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard.html">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="kontrak.html">Kontrak Digital</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary text-white ms-lg-2" href="lapor.html">Lapor Harga</a>
+            </li>
+          </ul>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Komoditas Indonesia</h5>
-                    <p>Sistem prediksi harga komoditas pertanian Indonesia</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p>&copy; 2023 Komoditas Indonesia. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
+      </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h1>Dashboard</h1>
+        <p>Halaman ini sekarang memiliki navigasi lengkap.</p>
+    </div>
+    
+    <footer class="text-center p-4 bg-dark text-white mt-5">
+        <p>&copy; 2025 Demo Lomba AgroPrediksi.</p>
     </footer>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom JS -->
-    <script src="dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
