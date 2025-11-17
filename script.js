@@ -1,68 +1,58 @@
- $(document).ready(function() {
-    // Initialize page
-    initializePage();
-    
-    // Set up scroll reveal animations
-    setupScrollReveal();
-    
-    // Set up map hover effects
-    setupMapEffects();
-});
+console.log('kontrak loaded');
 
-// Initialize page
-function initializePage() {
-    // Set today's date
-    const today = new Date();
-    const dateString = today.toLocaleDateString('id-ID', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-    
-    // Add any initialization code here
-    console.log("Halaman utama dimuat dengan sukses");
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formKontrakBaru');
+    const tableBody = document.getElementById('kontrakTableBody');
+    let nextId = 3; // Lanjutkan dari ID terakhir di HTML (KTR-002)
 
-// Set up scroll reveal animations
-function setupScrollReveal() {
-    // Check if element is in viewport
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-    
-    // Add scroll event listener
-    $(window).on('scroll', function() {
-        $('.animate-slide-up').each(function() {
-            if (isInViewport(this)) {
-                $(this).css('opacity', '1');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form submit default
+
+            // Ambil nilai
+            const komoditas = document.getElementById('komoditasBaru').value;
+            const kuantitas = document.getElementById('kuantitasBaru').value;
+            const harga = document.getElementById('hargaBaru').value;
+            
+            // Format ID baru
+            const idNumber = String(nextId).padStart(3, '0');
+            const newId = 'KTR-' + idNumber;
+            nextId++;
+            
+            // Format angka untuk tampilan
+            const kuantitasFormatted = parseInt(kuantitas).toLocaleString('id-ID');
+            const hargaFormatted = parseInt(harga).toLocaleString('id-ID');
+
+            // Buat baris baru
+            const newRow = `
+                <tr>
+                    <td>${newId}</td>
+                    <td>${komoditas}</td>
+                    <td>${kuantitasFormatted}</td>
+                    <td>${hargaFormatted}</td>
+                    <td><span class="badge bg-danger">Draft Baru</span></td>
+                    <td><button class="btn btn-sm btn-outline-info">Detail</button></td>
+                </tr>
+            `;
+
+            // Tambahkan baris ke tabel
+            tableBody.insertAdjacentHTML('beforeend', newRow);
+
+            // Tampilkan notifikasi dan tutup modal
+            alert(`Kontrak ${newId} untuk ${komoditas} berhasil ditambahkan!`);
+            
+            // Tutup modal secara manual
+            const modalElement = document.getElementById('tambahKontrakModal');
+            // Cek apakah bootstrap.Modal tersedia sebelum membuat instance baru
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                 const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                 modalInstance.hide();
+            } else {
+                 console.error('Bootstrap Modal tidak tersedia.');
             }
+           
+            form.reset();
+            console.log('Kontrak baru dibuat:', { newId, komoditas, kuantitas, harga });
         });
-    });
-    
-    // Trigger scroll event once on page load
-    $(window).trigger('scroll');
-}
-
-// Set up map hover effects
-function setupMapEffects() {
-    $('.map-container, .map-regions').hover(
-        function() {
-            $(this).addClass('shadow-lg');
-        },
-        function() {
-            $(this).removeClass('shadow-lg');
-        }
-    );
-    
-    // Add click event to map regions if needed
-    $('.map-regions').on('click', function() {
-        // Redirect to dashboard with region parameter
-        window.location.href = 'dashboard.html';
-    });
-}
+    }
+});
