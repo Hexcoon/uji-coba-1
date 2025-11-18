@@ -86,7 +86,7 @@
                     <div class="card-body">
                         <h5 class="card-title fw-bold text-dark">Prediksi Harga (AI Projection)</h5>
                         <p class="text-muted small">Estimasi tren harga untuk 30 hari ke depan.</p>
-                        <div class="chart-container">
+                        <div class="chart-container" style="height: 300px;">
                             <canvas id="predictionChart"></canvas>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                     <div class="card-body">
                         <h5 class="card-title fw-bold text-dark">Data Historis & Laporan User</h5>
                         <p class="text-muted small">Data aktual dari pasar dan kontribusi pengguna.</p>
-                        <div class="chart-container">
+                        <div class="chart-container" style="height: 300px;">
                             <canvas id="historicalChart"></canvas>
                         </div>
                     </div>
@@ -120,10 +120,223 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="dashboard.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // --- VARIABLE GLOBAL CHART ---
+            let predictionChart = null;
+            let historicalChart = null;
+            
+            // --- 1. DATA DUMMY CERDAS (SIMULASI) ---
+            const baseData = {
+                beras: { 
+                    min: 12500, max: 14000, 
+                    factors: { weather: "Cerah (Panen Raya)", stock: "Surplus 15%", distribution: "Lancar Jaya" }
+                },
+                cabai: { 
+                    min: 35000, max: 55000, 
+                    factors: { weather: "Hujan Ekstrem", stock: "Menipis", distribution: "Terhambat" }
+                },
+                bawang: { 
+                    min: 28000, max: 42000, 
+                    factors: { weather: "Berawan", stock: "Cukup", distribution: "Normal" }
+                }
+            };
+
+            // --- 2. FUNGSI GENERATE DATA ---
+            function generateData(commodity) {
+                const days = 30;
+                const settings = baseData[commodity];
+                
+                // Generate Tanggal
+                const futureLabels = Array.from({length: 30}, (_, i) => {
+                    const d = new Date(); d.setDate(d.getDate() + i);
+                    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                });
+                const pastLabels = Array.from({length: 30}, (_, i) => {
+                    const d = new Date(); d.setDate(d.getDate() - 30 + i);
+                    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                });
+
+                // Generate Angka Historis (Random Realistis)
+                const historicalData = [];
+                let currentPrice = settings.min + Math.random() * (settings.max - settings.min);
+                for(let i=0; i<days; i++) {
+                    let change = (Math.random() - 0.5) * (settings.max * 0.05);
+                    currentPrice += change;
+                    // Keep within bounds
+                    currentPrice = Math.max(settings.min, Math.min(settings.max, currentPrice));
+                    historicalData.push(Math.floor(currentPrice));
+                }
+
+                // Generate Prediksi (Regresi Linear Sederhana)
+                const predictionData = [];
+                // Hitung trend sederhana dari data terakhir
+                const lastPrice = historicalData[historicalData.length-1];
+                let trend = (historicalData[historicalData.length-1] - historicalData[0]) / days;
+                
+                for(let i=0; i<days; i++) {
+                    let pred = lastPrice + (trend * i) + ((Math.random()-0.5) * (settings.max * 0.02));
+                    predictionData.push(Math.floor(pred));
+                }
+
+                return {
+                    futureLabels, pastLabels, predictionData, historicalData, factors: settings.factors
+                };
+            }
+
+            // --- 3. LOAD DATA KE LAYAR ---
+            function loadCommodityData(commodity) {
+                const data = generateData(commodity);
+                
+                // Update Teks Faktor
+                $('#weatherFactor').text(data.factors.weather);
+                $('#stockFactor').text(data.factors.stock);
+                $('#distributionFactor').text(data.factors.distribution);
+
+                // Render Chart Prediksi
+                renderPredictionChart(data.futureLabels, data.predictionData);
+                
+                // Render Chart Historis + Data User
+                renderHistoricalChart(data.pastLabels, data.historicalData, commodity);
+            }
+
+            // --- 4. RENDER CHART PREDIKSI ---
+            function renderPredictionChart(labels, data) {
+                const ctx = document.getElementById('predictionChart').getContext('2d');
+                if (predictionChart) predictionChart.destroy();
+
+                // Buat Gradient
+                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(13, 110, 253, 0.5)');
+                gradient.addColorStop(1, 'rgba(13, 110, 253, 0.0)');
+
+                predictionChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Prediksi AI (Rp)',
+                            data: data,
+                            borderColor: '#0d6efd',
+                            backgroundColor: gradient,
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { intersect: false, mode: 'index' },
+                        plugins: { legend: {display: false} }
+                    }
+                });
+            }
+
+            // --- 5. RENDER CHART HISTORIS (DENGAN LOCALSTORAGE) ---
+            function renderHistoricalChart(labels, sysData, commodity) {
+                const ctx = document.getElementById('historicalChart').getContext('2d');
+                if (historicalChart) historicalChart.destroy();
+
+                // Ambil Data User dari LocalStorage
+                const reports = JSON.parse(localStorage.getItem('priceReports')) || [];
+                const userData = new Array(30).fill(null); // Array kosong
+                
+                // Cocokkan tanggal laporan user dengan label grafik
+                reports.forEach(rep => {
+                    if(rep.commodity === commodity) {
+                        const repDate = new Date(rep.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        const index = labels.indexOf(repDate);
+                        if(index !== -1) {
+                            userData[index] = parseInt(rep.price);
+                        }
+                    }
+                });
+
+                historicalChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Laporan User',
+                                data: userData,
+                                borderColor: '#ffc107',
+                                backgroundColor: '#ffc107',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                tension: 0.2
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Data Pasar',
+                                data: sysData,
+                                backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { intersect: false, mode: 'index' }
+                    }
+                });
+            }
+
+            // --- 6. FITUR DOWNLOAD EXCEL (CSV) ---
+            $('#downloadData').on('click', function() {
+                const commodity = $('#commoditySelect').val();
+                
+                // Animasi Loading SweetAlert
+                let timerInterval;
+                Swal.fire({
+                    title: 'Mengunduh Data...',
+                    html: 'Menyiapkan laporan <b>' + commodity.toUpperCase() + '</b>',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: () => { Swal.showLoading(); },
+                    willClose: () => { clearInterval(timerInterval); }
+                }).then((result) => {
+                    // Proses Download
+                    const data = generateData(commodity);
+                    let csvContent = "data:text/csv;charset=utf-8,";
+                    csvContent += "Tanggal,Tipe Data,Harga (Rp)\n";
+                    
+                    data.pastLabels.forEach((l, i) => {
+                        csvContent += `${l},Historis,${data.historicalData[i]}\n`;
+                    });
+                    data.futureLabels.forEach((l, i) => {
+                        csvContent += `${l},Prediksi,${data.predictionData[i]}\n`;
+                    });
+
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `Laporan_${commodity}_2025.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Sukses Message
+                    Swal.fire('Berhasil!', 'Data telah tersimpan.', 'success');
+                });
+            });
+
+            // --- 7. EVENT LISTENER GANTI KOMODITAS ---
+            $('#commoditySelect').on('change', function() {
+                loadCommodityData($(this).val());
+            });
+
+            // --- 8. INISIALISASI AWAL ---
+            loadCommodityData('beras');
+        });
+    </script>
 </body>
 </html>
