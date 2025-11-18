@@ -33,36 +33,48 @@
     </header>
 
     <main class="container mt-5 pt-5">
-        <h2 class="mb-4 fw-bold">Dashboard Prediksi Harga</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Dashboard Prediksi Harga</h2>
+            <span class="badge bg-success p-2"><i class="fas fa-dot-circle me-1"></i> Live Data 2025</span>
+        </div>
         
         <div class="row mb-4">
             <div class="col-md-6">
-                <label for="commoditySelect" class="form-label">Pilih Komoditas:</label>
-                <select id="commoditySelect" class="form-select shadow-sm">
-                    <option value="beras">Beras</option>
-                    <option value="cabai">Cabai</option>
+                <label for="commoditySelect" class="form-label fw-bold">Pilih Komoditas:</label>
+                <select id="commoditySelect" class="form-select shadow-sm border-primary">
+                    <option value="beras">Beras Premium</option>
+                    <option value="cabai">Cabai Merah</option>
                     <option value="bawang">Bawang Merah</option>
                 </select>
             </div>
             <div class="col-md-6 d-flex align-items-end justify-content-end">
-                <button id="downloadData" class="btn btn-primary shadow-sm">
-                    <i class="fas fa-download me-2"></i>Unduh Data
+                <button id="downloadData" class="btn btn-primary shadow-sm px-4">
+                    <i class="fas fa-file-excel me-2"></i>Unduh Laporan (Excel)
                 </button>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card shadow-sm mb-4 border-0">
             <div class="card-body">
-                <h5 class="card-title fw-bold">Analisis Faktor Eksternal</h5>
+                <h5 class="card-title fw-bold text-primary mb-3"><i class="fas fa-globe-asia me-2"></i>Analisis Faktor Eksternal</h5>
                 <div class="row mt-3">
                     <div class="col-md-4">
-                        <p class="mb-2"><i class="fas fa-cloud-sun text-warning me-2"></i> <strong>Cuaca:</strong> <span id="weatherFactor">Memuat...</span></p>
+                        <div class="p-3 bg-light rounded">
+                            <p class="mb-1 text-muted small">Kondisi Cuaca</p>
+                            <p class="mb-0 fw-bold"><i class="fas fa-cloud-sun text-warning me-2"></i> <span id="weatherFactor">Memuat...</span></p>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-2"><i class="fas fa-warehouse text-info me-2"></i> <strong>Stok Gudang:</strong> <span id="stockFactor">Memuat...</span></p>
+                        <div class="p-3 bg-light rounded">
+                            <p class="mb-1 text-muted small">Stok Nasional</p>
+                            <p class="mb-0 fw-bold"><i class="fas fa-warehouse text-info me-2"></i> <span id="stockFactor">Memuat...</span></p>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <p class="mb-2"><i class="fas fa-truck text-success me-2"></i> <strong>Distribusi:</strong> <span id="distributionFactor">Memuat...</span></p>
+                        <div class="p-3 bg-light rounded">
+                            <p class="mb-1 text-muted small">Status Distribusi</p>
+                            <p class="mb-0 fw-bold"><i class="fas fa-truck text-success me-2"></i> <span id="distributionFactor">Memuat...</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,9 +82,10 @@
 
         <div class="row">
             <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Prediksi Harga (AI Projection)</h5>
+                        <h5 class="card-title fw-bold text-dark">Prediksi Harga (AI Projection)</h5>
+                        <p class="text-muted small">Estimasi tren harga untuk 30 hari ke depan.</p>
                         <div class="chart-container">
                             <canvas id="predictionChart"></canvas>
                         </div>
@@ -80,9 +93,10 @@
                 </div>
             </div>
             <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm h-100">
+                <div class="card shadow-sm h-100 border-0">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">Data Historis & Laporan User</h5>
+                        <h5 class="card-title fw-bold text-dark">Data Historis & Laporan User</h5>
+                        <p class="text-muted small">Data aktual dari pasar dan kontribusi pengguna.</p>
                         <div class="chart-container">
                             <canvas id="historicalChart"></canvas>
                         </div>
@@ -109,6 +123,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="dashboard.js"></script>
 </body>
 </html>

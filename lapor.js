@@ -1,161 +1,140 @@
 $(document).ready(function() {
-    // Set today's date as default
+    // Set default date
     const today = new Date().toISOString().split('T')[0];
     $('#reportDate').val(today);
     
-    // Load existing reports from localStorage
+    // Load existing
     loadReportsFromLocalStorage();
     
-    // Handle form submission
+    // Handle SUBMIT
     $('#priceReportForm').on('submit', function(e) {
         e.preventDefault();
         
-        const priceInput = $('#reportPrice');
-        if (parseInt(priceInput.val()) < 100) {
-            priceInput.addClass('is-invalid');
-            return;
-        }
-        priceInput.removeClass('is-invalid');
-
-        // Get form data
         const formData = {
             commodity: $('#reportCommodity').val(),
             location: $('#reportLocation').val(),
-            price: priceInput.val(),
+            price: $('#reportPrice').val(),
             date: $('#reportDate').val(),
-            id: Date.now() // Unique ID for the report
+            id: Date.now()
         };
         
-        // Save to localStorage
         saveReportToLocalStorage(formData);
-        
-        // Add to table
         addReportToTable(formData);
         
-        // Show notification (TOAST)
-        showToast('Data harga berhasil dikirim dan akan digunakan dalam prediksi!', 'success');
+        // UPDATE 3.0: Notifikasi Keren
+        Swal.fire({
+            icon: 'success',
+            title: 'Terima Kasih!',
+            text: 'Laporan harga berhasil dikirim ke sistem.',
+            confirmButtonColor: '#198754',
+            timer: 2000
+        });
         
-        // Reset form
         this.reset();
         $('#reportDate').val(today);
     });
     
-    // Handle delete all reports button
+    // Handle DELETE ALL
     $('#deleteAllReports').on('click', function() {
-        if (confirm('Apakah Anda yakin ingin menghapus semua laporan? Tindakan ini akan mempengaruhi data historis di Dashboard.')) {
-            localStorage.removeItem('priceReports');
-            $('#priceReportsTable').empty();
-            toggleNoReportsMessage(true);
-            showToast('Semua laporan telah dihapus', 'info');
-        }
-    });
-
-    // Event delegation for delete single report
-    $('#priceReportsTable').on('click', '.btn-delete-report', function() {
-        const reportId = $(this).data('id');
-        deleteReport(reportId);
+        // Konfirmasi Keren
+        Swal.fire({
+            title: 'Hapus semua laporan?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem('priceReports');
+                $('#priceReportsTable tbody').empty();
+                toggleNoReportsMessage(true);
+                Swal.fire('Dihapus!', 'Semua laporan telah dibersihkan.', 'success');
+            }
+        });
     });
     
-    // --- Core Functions ---
-
-    function loadReportsFromLocalStorage() {
-        const reports = JSON.parse(localStorage.getItem('priceReports') || '[]');
-        $('#priceReportsTable').empty(); // Clear table
-        
-        if (reports.length === 0) {
-            toggleNoReportsMessage(true);
-        } else {
-            reports.forEach(addReportToTable);
-            toggleNoReportsMessage(false);
-        }
-    }
-    
-    function saveReportToLocalStorage(newReport) {
-        const reports = JSON.parse(localStorage.getItem('priceReports') || '[]');
-        reports.push(newReport);
+    // ... Sisa fungsi pembantu tetap sama ...
+    function saveReportToLocalStorage(report) {
+        let reports = JSON.parse(localStorage.getItem('priceReports')) || [];
+        reports.push(report);
         localStorage.setItem('priceReports', JSON.stringify(reports));
     }
     
-    function addReportToTable(report) {
-        // Toggle message off
-        toggleNoReportsMessage(false);
-        
-        const formattedDate = new Date(report.date).toLocaleDateString('id-ID');
-        
-        const row = `<tr data-id="${report.id}">
-            <td></td>
-            <td>${formattedDate}</td>
-            <td>${report.commodity.toUpperCase()}</td>
-            <td>Rp ${parseInt(report.price).toLocaleString('id-ID')}</td>
-            <td>${report.location}</td>
-            <td>
-                <button class="btn btn-sm btn-danger btn-delete-report" data-id="${report.id}"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>`;
-        
-        $('#priceReportsTable').append(row);
-        updateRowNumbers();
-    }
-    
-    function deleteReport(reportId) {
-        let reports = JSON.parse(localStorage.getItem('priceReports') || '[]');
-        
-        // Remove the report
-        const initialLength = reports.length;
-        reports = reports.filter(report => report.id !== reportId);
-        
-        if (reports.length < initialLength) {
-            localStorage.setItem('priceReports', JSON.stringify(reports));
-            
-            // Remove the row from the table
-            $(`#priceReportsTable tr[data-id="${reportId}"]`).remove();
-            
-            updateRowNumbers();
-            
-            // Show no reports message if table is empty
-            if (reports.length === 0) {
-                toggleNoReportsMessage(true);
-            }
-            
-            showToast('Laporan berhasil dihapus', 'info');
+    function loadReportsFromLocalStorage() {
+        const reports = JSON.parse(localStorage.getItem('priceReports')) || [];
+        if (reports.length === 0) {
+            toggleNoReportsMessage(true);
+        } else {
+            toggleNoReportsMessage(false);
+            reports.forEach(report => {
+                addReportToTable(report);
+            });
         }
     }
     
-    // Function to update row numbers
+    function addReportToTable(report) {
+        const commodityNames = {
+            'beras': 'Beras',
+            'cabai': 'Cabai',
+            'bawang': 'Bawang Merah'
+        };
+        const formattedDate = new Date(report.date).toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+        
+        const row = `
+            <tr data-id="${report.id}">
+                <td>${$('#priceReportsTable tbody tr').length + 1}</td>
+                <td><span class="badge bg-primary">${commodityNames[report.commodity]}</span></td>
+                <td>${report.location}</td>
+                <td class="fw-bold">Rp ${parseInt(report.price).toLocaleString('id-ID')}</td>
+                <td>${formattedDate}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger delete-report">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $('#priceReportsTable tbody').append(row);
+        toggleNoReportsMessage(false);
+        
+        $(`tr[data-id="${report.id}"] .delete-report`).on('click', function() {
+            deleteReport(report.id);
+        });
+    }
+    
+    function deleteReport(id) {
+        // Hapus langsung tanpa konfirmasi ribet per item
+        let reports = JSON.parse(localStorage.getItem('priceReports')) || [];
+        reports = reports.filter(report => report.id !== id);
+        localStorage.setItem('priceReports', JSON.stringify(reports));
+        $(`tr[data-id="${id}"]`).remove();
+        updateRowNumbers();
+        if (reports.length === 0) toggleNoReportsMessage(true);
+        
+        const Toast = Swal.mixin({
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 1500
+        });
+        Toast.fire({ icon: 'success', title: 'Laporan dihapus' });
+    }
+    
     function updateRowNumbers() {
-        $('#priceReportsTable tr').each(function(index) {
+        $('#priceReportsTable tbody tr').each(function(index) {
             $(this).find('td:first').text(index + 1);
         });
     }
     
-    // Function to toggle no reports message
     function toggleNoReportsMessage(show) {
         if (show) {
-            $('#noReportsMessage').show();
-            $('#priceReportsTable').hide();
+            $('#noReportsMessage').removeClass('d-none');
+            $('#priceReportsTable').addClass('d-none');
         } else {
-            $('#noReportsMessage').hide();
-            $('#priceReportsTable').show();
+            $('#noReportsMessage').addClass('d-none');
+            $('#priceReportsTable').removeClass('d-none');
         }
-    }
-    
-    // Function to show notification (TOAST - NEW STYLE)
-    function showToast(message, type) {
-        const toast = $('#liveToast');
-        const toastBody = $('#toastBody');
-        
-        // Set body message and color
-        toastBody.html(message);
-        
-        // Set header icon and color based on type
-        const icon = type === 'success' ? 'fa-check-circle' : 'fa-info-circle';
-        const color = type === 'success' ? 'text-success' : 'text-info';
-        
-        toast.find('.toast-header strong').html(`<i class="fas ${icon} me-2"></i>Sistem Lapor`);
-        toast.find('.toast-header strong').removeClass('text-primary text-success text-info').addClass(color);
-
-        // Show toast
-        const bsToast = new bootstrap.Toast(toast[0]);
-        bsToast.show();
     }
 });

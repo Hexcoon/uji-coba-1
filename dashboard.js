@@ -1,300 +1,297 @@
 $(document).ready(function() {
-    // Initialize charts
+    // Inisialisasi Chart
     let predictionChart, historicalChart;
     
-    // Load initial data
-    loadCommodityData('beras', 'nasional');
+    // Load data awal
+    loadCommodityData('beras');
     
-    // Handle commodity selection change
+    // Handle perubahan pilihan komoditas
     $('#commoditySelect').on('change', function() {
         const selectedCommodity = $(this).val();
-        const selectedRegion = $('#regionSelect').val();
-        loadCommodityData(selectedCommodity, selectedRegion);
+        loadCommodityData(selectedCommodity);
+        
+        // Efek notifikasi kecil saat ganti data
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+        Toast.fire({
+            icon: 'info',
+            title: 'Memuat data ' + selectedCommodity
+        });
     });
     
-    // Handle region selection change (NEW FEATURE)
-    $('#regionSelect').on('change', function() {
-        const selectedCommodity = $('#commoditySelect').val();
-        const selectedRegion = $(this).val();
-        loadCommodityData(selectedCommodity, selectedRegion);
-    });
-    
-    // Handle download data button
+    // Handle tombol download (UPDATE 3.0: Export ke CSV)
     $('#downloadData').on('click', function() {
         const selectedCommodity = $('#commoditySelect').val();
-        const selectedRegion = $('#regionSelect').val();
-        downloadCommodityData(selectedCommodity, selectedRegion);
+        
+        // Tampilkan loading dulu
+        let timerInterval;
+        Swal.fire({
+            title: 'Menyiapkan Laporan...',
+            html: 'Mengunduh data analisis <b>' + selectedCommodity + '</b>.',
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            willClose: () => {
+                clearInterval(timerInterval);
+            }
+        }).then((result) => {
+            // Eksekusi download setelah loading selesai
+            downloadCSV(selectedCommodity);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Laporan telah disimpan ke perangkat Anda.',
+                confirmButtonColor: '#0d6efd'
+            });
+        });
     });
     
-    // Function to load commodity data
-    function loadCommodityData(commodity, region) {
-        // Get commodity data
-        const data = getCommodityData(commodity, region);
+    // --- FUNGSI MATEMATIKA: REGRESI LINEAR ---
+    function generateLinearRegression(historicalData, futureDays) {
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+        const n = historicalData.length;
+
+        for (let i = 0; i < n; i++) {
+            const x = i;
+            const y = historicalData[i];
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumXX += x * x;
+        }
+
+        const denominator = (n * sumXX - sumX * sumX);
+        if (denominator === 0) return generateRandomData(futureDays, historicalData[n-1]*0.9, historicalData[n-1]*1.1);
         
-        // Update factor information
+        const m = (n * sumXY - sumX * sumY) / denominator;
+        const b = (sumY - m * sumX) / n;
+
+        const prediction = [];
+        for (let i = 0; i < futureDays; i++) {
+            let predictedY = m * (i + n) + b;
+            const noise = (Math.random() - 0.5) * (predictedY * 0.05);
+            predictedY = Math.round(predictedY + noise);
+            if (predictedY < 5000) predictedY = 5000;
+            prediction.push(predictedY);
+        }
+        return prediction;
+    }
+
+    const generateRandomData = (days, min, max) => {
+        const data = [];
+        let lastValue = Math.floor(Math.random() * (max - min + 1)) + min;
+        for (let i = 0; i < days; i++) {
+            const fluctuation = (Math.random() - 0.5) * (max - min) * 0.05;
+            lastValue = Math.round(Math.max(min, Math.min(max, lastValue + fluctuation)));
+            data.push(lastValue);
+        }
+        return data;
+    };
+    
+    // --- INTEGRASI DATA LOCALSTORAGE ---
+    function loadUserReports(commodity, historicalLabels) {
+        const reports = JSON.parse(localStorage.getItem('priceReports')) || [];
+        const finalData = [];
+        const userReportsMap = new Map();
+        
+        reports.filter(report => report.commodity === commodity)
+            .forEach(report => {
+                const dateLabel = new Date(report.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                userReportsMap.set(dateLabel, parseInt(report.price));
+            });
+
+        historicalLabels.forEach(label => {
+            if (userReportsMap.has(label)) {
+                finalData.push(userReportsMap.get(label));
+            } else {
+                finalData.push(null);
+            }
+        });
+        return finalData;
+    }
+
+    // --- FUNGSI UTAMA LOAD DATA ---
+    function loadCommodityData(commodity) {
+        const data = getCommodityData(commodity);
         updateFactorInfo(data.factors);
-        
-        // Update charts
-        updatePredictionChart(data.prediction, commodity);
-        updateHistoricalChart(data.historical, commodity);
+        updatePredictionChart(data.prediction);
+        updateHistoricalChart(data.historical, commodity); 
     }
     
-    // Function to get commodity data (simulated with 2025 base price)
-    function getCommodityData(commodity, region) {
-        let baseMin, baseMax, factorOffset;
+    function getCommodityData(commodity) {
+        const labels = Array.from({length: 30}, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() + i);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        });
+        
+        const historicalLabels = Array.from({length: 30}, (_, i) => {
+            const date = new Date();
+            date.setDate(date.getDate() - 30 + i);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        });
 
-        // Base price simulation for 2025 (adjusted upwards from 2023)
-        switch (commodity) {
-            case 'beras':
-                baseMin = 13500; baseMax = 15000;
-                break;
-            case 'cabai':
-                baseMin = 45000; baseMax = 65000;
-                break;
-            case 'bawang':
-                baseMin = 30000; baseMax = 40000;
-                break;
-            case 'gula': // NEW COMMODITY BASE PRICE
-                baseMin = 16000; baseMax = 18000;
-                break;
-            default:
-                baseMin = 10000; baseMax = 12000;
-        }
-
-        // Region Adjustment (NEW FEATURE)
-        if (region === 'jawa') {
-            factorOffset = -0.05; // 5% lower prices in Java (closer to production centers)
-        } else if (region === 'luar_jawa') {
-            factorOffset = 0.10; // 10% higher prices outside Java (logistics cost)
-        } else {
-            factorOffset = 0; // National average
-        }
-
-        baseMin = baseMin * (1 + factorOffset);
-        baseMax = baseMax * (1 + factorOffset);
-
-        // Generate random data for demonstration
-        const generateRandomData = (days, min, max) => {
-            const data = [];
-            for (let i = 0; i < days; i++) {
-                data.push(Math.round(Math.random() * (max - min + 1)) + min);
-            }
-            return data;
+        const basePrices = {
+            beras: { min: 12500, max: 14000 },
+            cabai: { min: 35000, max: 55000 },
+            bawang: { min: 28000, max: 42000 }
         };
         
-        const labels = Array.from({length: 30}, (_, i) => `Hari ${30 - i}`);
-        const historicalPrices = generateRandomData(30, baseMin * 0.95, baseMax * 1.05);
-
-        // --- REGRESSION SIMULATION FOR PREDICTION ---
-        const generateRegressionData = (historicalData, days) => {
-            // Simplified Linear Regression: y = mx + c (m is slope)
-            const n = historicalData.length;
-            
-            // Generate X values (0 to n-1) for historical data
-            const X_hist = Array.from({length: n}, (_, i) => i);
-
-            // Calculate Sums
-            const sumX = X_hist.reduce((a, b) => a + b, 0);
-            const sumY = historicalData.reduce((a, b) => a + b, 0);
-            const sumXY = X_hist.reduce((sum, x, i) => sum + x * historicalData[i], 0);
-            const sumXX = X_hist.reduce((sum, x) => sum + x * x, 0);
-
-            // Calculate slope (m) and intercept (c)
-            const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-            const intercept = (sumY - slope * sumX) / n;
-            
-            // Generate future predictions (from x = n to x = n + days - 1)
-            const predictionData = [];
-            for (let i = 0; i < days; i++) {
-                const x = n + i;
-                let predictedPrice = intercept + slope * x;
-                
-                // Add minor random noise to make it look more realistic
-                const noise = (Math.random() - 0.5) * (baseMax * 0.02); 
-                predictedPrice += noise;
-
-                // Ensure price stays positive
-                predictedPrice = Math.max(0, predictedPrice);
-                
-                predictionData.push(Math.round(predictedPrice));
-            }
-            return predictionData;
-        };
-
-        const predictionLabels = Array.from({length: 30}, (_, i) => `Hari +${i + 1}`);
-        const predictionPrices = generateRegressionData(historicalPrices, 30);
-        
-        // --- ADD USER REPORTS TO HISTORICAL DATA (NEW FEATURE) ---
-        const userReports = loadReportsFromLocalStorage(commodity);
-        const historicalWithReports = [...historicalPrices]; 
-        // NOTE: In a real app, reports would be mapped to specific dates. Here, we just overlay them.
-        
-        if (userReports.length > 0) {
-            // Simple integration: Use the last user report's price as the most recent point
-            historicalWithReports[29] = userReports[userReports.length - 1].price;
-        }
-
         const factors = {
-            weather: ["Cuaca Baik (Panen Stabil)", "Risiko Banjir (Produksi Menurun)", "Kemarau Panjang (Gagal Panen)"][Math.floor(Math.random() * 3)],
-            stock: ["Stok Surplus", "Stok Normal", "Stok Defisit"][Math.floor(Math.random() * 3)],
-            distribution: ["Lancarr", "Terhambat Cuaca", "Tersendat Regulasi"][Math.floor(Math.random() * 3)],
-            accuracy: `${(Math.random() * 5 + 90).toFixed(2)}%` // 90-95% accuracy
+            beras: {
+                weather: "Cerah (Kondisi Panen Optimal)",
+                stock: "Surplus 15% di Gudang Bulog",
+                distribution: "Lancar via Tol Laut"
+            },
+            cabai: {
+                weather: "Hujan Sedang (Risiko Pembusukan)",
+                stock: "Menipis di Pasar Induk",
+                distribution: "Terhambat di Jawa Barat"
+            },
+            bawang: {
+                weather: "Berawan (Stabil)",
+                stock: "Cukup untuk 3 Bulan",
+                distribution: "Normal"
+            }
         };
 
+        const currentHistoricalData = generateRandomData(30, basePrices[commodity].min, basePrices[commodity].max);
+        const currentPredictionData = generateLinearRegression(currentHistoricalData, 30);
+        
         return {
-            prediction: { labels: predictionLabels, prices: predictionPrices },
-            historical: { labels: labels.reverse(), prices: historicalWithReports.reverse() }, // Reverse to show chronologically
-            factors: factors
+            prediction: { labels: labels, data: currentPredictionData },
+            historical: { labels: historicalLabels, data: currentHistoricalData },
+            factors: factors[commodity]
         };
-    }
-
-    // Function to load user reports from localStorage, filtered by commodity
-    function loadReportsFromLocalStorage(commodity) {
-        const reports = JSON.parse(localStorage.getItem('priceReports') || '[]');
-        return reports
-            .filter(report => report.commodity === commodity)
-            .map(report => ({
-                date: report.date,
-                price: parseInt(report.price)
-            }))
-            .sort((a, b) => new Date(a.date) - new Date(b.date));
     }
     
-    // Function to update factor information
     function updateFactorInfo(factors) {
         $('#weatherFactor').text(factors.weather);
         $('#stockFactor').text(factors.stock);
         $('#distributionFactor').text(factors.distribution);
-        $('#accuracyFactor').text(factors.accuracy);
     }
-
-    // Function to create/update prediction chart
-    function updatePredictionChart(data, commodity) {
-        if (predictionChart) {
-            predictionChart.destroy();
-        }
-
+    
+    // --- UPDATE CHART (Desain 3.0) ---
+    function updatePredictionChart(data) {
         const ctx = document.getElementById('predictionChart').getContext('2d');
+        if (predictionChart) predictionChart.destroy();
+        
+        // Gradient Background
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(13, 110, 253, 0.5)');
+        gradient.addColorStop(1, 'rgba(13, 110, 253, 0.0)');
+
         predictionChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.labels,
                 datasets: [{
-                    label: `Prediksi Harga ${commodity.toUpperCase()} (Rp/Kg)`,
-                    data: data.prices,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    label: 'AI Prediction (Rp)',
+                    data: data.data,
+                    backgroundColor: gradient,
+                    borderColor: '#0d6efd',
                     borderWidth: 2,
-                    pointRadius: 3,
-                    tension: 0.3
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    tension: 0.4, // Kurva mulus
+                    fill: true
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
+                    legend: { display: true },
                     tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += `Rp ${context.parsed.y.toLocaleString('id-ID')}/kg`;
-                                return label;
-                            }
-                        }
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: { label: (c) => ` Prediksi: Rp ${c.raw.toLocaleString('id-ID')}` }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + value.toLocaleString('id-ID');
-                            }
-                        }
-                    }
+                    y: { grid: { borderDash: [5, 5] }, ticks: { callback: (v) => 'Rp ' + v/1000 + 'rb' } },
+                    x: { grid: { display: false } }
                 }
             }
         });
     }
     
-    // Function to create/update historical chart
     function updateHistoricalChart(data, commodity) {
-        if (historicalChart) {
-            historicalChart.destroy();
-        }
-
         const ctx = document.getElementById('historicalChart').getContext('2d');
+        const userReportData = loadUserReports(commodity, data.labels);
+        if (historicalChart) historicalChart.destroy();
+        
         historicalChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: data.labels,
-                datasets: [{
-                    label: `Harga Historis ${commodity.toUpperCase()} (Rp/Kg)`,
-                    data: data.prices,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    tension: 0.3
-                }]
+                datasets: [
+                    {
+                        label: 'Data Pasar',
+                        data: data.data,
+                        backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                        borderRadius: 4,
+                        order: 2
+                    },
+                    {
+                        label: 'Laporan Anda',
+                        data: userReportData,
+                        type: 'line',
+                        borderColor: '#ffc107',
+                        backgroundColor: '#ffc107',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        tension: 0.2,
+                        order: 1
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += `Rp ${context.parsed.y.toLocaleString('id-ID')}/kg`;
-                                return label;
-                            }
-                        }
+                        callbacks: { label: (c) => ` Harga: Rp ${c.raw ? c.raw.toLocaleString('id-ID') : '-'}` }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + value.toLocaleString('id-ID');
-                            }
-                        }
-                    }
+                    y: { grid: { borderDash: [5, 5] }, ticks: { callback: (v) => 'Rp ' + v/1000 + 'rb' } },
+                    x: { grid: { display: false } }
                 }
             }
         });
     }
     
-    // Function to download commodity data
-    function downloadCommodityData(commodity, region) {
-        const data = getCommodityData(commodity, region);
-        
-        // Create JSON object
-        const jsonData = {
-            komoditas: commodity,
-            regional: region,
-            prediksi: data.prediction,
-            historis: data.historical,
-            faktor: data.factors,
-            tanggalUnduh: new Date().toISOString()
-        };
-        
-        // Create download link
-        const dataStr = JSON.stringify(jsonData, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        
-        const exportFileDefaultName = `data_${commodity}_${region}_2025_${new Date().toISOString().slice(0,10)}.json`;
-        
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
+    // --- FITUR DOWNLOAD CSV (EXCEL) ---
+    function downloadCSV(commodity) {
+        const data = getCommodityData(commodity);
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Tanggal,Kategori,Harga (Rp)\n"; // Header
+
+        // Tambahkan Data Historis
+        data.historical.labels.forEach((date, index) => {
+            csvContent += `${date},Data Historis,${data.historical.data[index]}\n`;
+        });
+
+        // Tambahkan Data Prediksi
+        data.prediction.labels.forEach((date, index) => {
+            csvContent += `${date},Prediksi AI,${data.prediction.data[index]}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Laporan_${commodity}_2025.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 });
