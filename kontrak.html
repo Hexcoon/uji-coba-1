@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontrak Digital - Prediksi Harga Komoditas Indonesia 2025</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <span>Komoditas Indonesia 2025</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="kontrak.html">Kontrak Digital</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="lapor.html">Lapor Harga</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-5 pt-5">
+        <h2 class="mb-4">Buat dan Lacak Kontrak Digital</h2>
+        
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Detail Kontrak Baru</h5>
+                        <form id="contractForm">
+                            
+                            <div id="notification"></div>
+
+                            <div class="mb-3">
+                                <label for="commodity" class="form-label">Komoditas</label>
+                                <select class="form-select" id="commodity" required>
+                                    <option value="" disabled selected>Pilih Komoditas</option>
+                                    <option value="beras">Beras</option>
+                                    <option value="cabai">Cabai</option>
+                                    <option value="bawang">Bawang Merah</option>
+                                    <option value="gula">Gula</option> </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Kuantitas (Kg)</label>
+                                <input type="number" class="form-control" id="quantity" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="agreedPrice" class="form-label">Harga Kesepakatan (Rp/Kg)</label>
+                                <input type="number" class="form-control" id="agreedPrice" min="1000" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="startDate" class="form-label">Tanggal Mulai Kontrak</label>
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="endDate" class="form-label">Tanggal Berakhir Kontrak</label>
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="partyName" class="form-label">Nama Pihak Kedua (Pembeli/Petani)</label>
+                                <input type="text" class="form-control" id="partyName" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-handshake me-2"></i>Simpan Kontrak (Draft)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4 d-flex justify-content-between align-items-center">
+                            Riwayat Kontrak
+                            <button id="deleteAllContracts" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>Hapus Semua
+                            </button>
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Komoditas</th>
+                                        <th>Harga</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contractsTable">
+                                    </tbody>
+                            </table>
+                            <div id="noContractsMessage" class="text-center py-4 text-muted">
+                                <i class="fas fa-file-contract fa-3x mb-3"></i>
+                                <p>Belum ada riwayat kontrak digital.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Komoditas Indonesia 2025</h5>
+                    <p>Sistem prediksi harga komoditas pertanian Indonesia</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2025 Komoditas Indonesia. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="kontrak.js"></script>
+</body>
+</html>

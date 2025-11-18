@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Komoditas - Prediksi Harga Komoditas Indonesia</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <span>Komoditas Indonesia</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="dashboard.html">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="kontrak.html">Kontrak Digital</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="lapor.html">Lapor Harga</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-5 pt-5">
+        <h2 class="mb-4">Dashboard Prediksi Harga</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="commoditySelect" class="form-label">Pilih Komoditas:</label>
+                <select id="commoditySelect" class="form-select">
+                    <option value="beras">Beras</option>
+                    <option value="cabai">Cabai</option>
+                    <option value="bawang">Bawang Merah</option>
+                </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end justify-content-end">
+                <button id="downloadData" class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>Unduh Data
+                </button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Faktor-Faktor Pengaruh</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mb-1"><i class="fas fa-cloud-sun me-2"></i> **Cuaca:** <span id="weatherFactor">Memuat...</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1"><i class="fas fa-warehouse me-2"></i> **Stok/Panen:** <span id="stockFactor">Memuat...</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1"><i class="fas fa-truck me-2"></i> **Distribusi:** <span id="distributionFactor">Memuat...</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Prediksi Harga 30 Hari Ke Depan</h5>
+                        <div class="chart-container">
+                            <canvas id="predictionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Data Historis 30 Hari Terakhir</h5>
+                        <div class="chart-container">
+                            <canvas id="historicalChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Komoditas Indonesia</h5>
+                    <p>Sistem prediksi harga komoditas pertanian Indonesia</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2025 Komoditas Indonesia. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
