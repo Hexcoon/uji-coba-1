@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Komoditas Indonesia</title>
+    <title>Dashboard Live - Komoditas Indonesia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -11,10 +11,8 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-chart-line me-2"></i>Komoditas Indonesia</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="navbar-brand fw-bold" href="index.html"><i class="fas fa-chart-line me-2"></i>KPDI 2025</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">Beranda</a></li>
@@ -27,174 +25,220 @@
         </div>
     </nav>
 
-    <main class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <main class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm">
             <div>
-                <h2 class="fw-bold mb-0">Dashboard Prediksi</h2>
-                <small class="text-muted">Analisis AI & Integrasi Data 2025</small>
+                <h4 class="fw-bold mb-0 text-primary">Dashboard Monitoring</h4>
+                <small class="text-muted">Data Real-time Simulasi Pasar Nasional</small>
             </div>
-            <div class="d-flex gap-2">
-                <span class="badge bg-success d-flex align-items-center px-3"><i class="fas fa-circle me-2 fa-xs text-white"></i> Live</span>
-                <button id="downloadData" class="btn btn-primary btn-sm px-3"><i class="fas fa-download me-2"></i>Unduh Laporan</button>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-danger p-2 d-flex align-items-center"><span class="live-indicator me-2"></span> LIVE MARKET</span>
+                <button id="downloadData" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-2"></i>Export Excel</button>
             </div>
         </div>
 
-        <div class="card p-4 mb-4">
-            <div class="row align-items-end">
-                <div class="col-md-8">
-                    <label class="form-label fw-bold text-primary">Pilih Komoditas Pangan:</label>
-                    <select id="commoditySelect" class="form-select form-select-lg border-primary">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card p-3">
+                    <label class="form-label fw-bold text-muted small">PILIH KOMODITAS PANGAN</label>
+                    <select id="commoditySelect" class="form-select form-select-lg border-primary fw-bold">
                         <option value="beras">Beras Premium</option>
                         <option value="cabai">Cabai Merah Keriting</option>
                         <option value="bawang">Bawang Merah</option>
-                        <option value="minyak">Minyak Goreng (Kita)</option>
+                        <option value="minyak">Minyak Goreng</option>
                         <option value="gula">Gula Pasir</option>
                         <option value="telur">Telur Ayam Ras</option>
                         <option value="daging">Daging Ayam</option>
                     </select>
                 </div>
             </div>
-        </div>
-
-<div class="row mb-4 g-4">
-            <div class="col-lg-6">
-                <div class="card p-3 h-100">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>Prediksi AI (30 Hari)</h5>
-                    
-                    <div class="mb-3">
-                        <label for="predictionStartDate" class="form-label small fw-bold text-muted">Mulai Prediksi:</label>
-                        <input type="date" class="form-control form-control-sm" id="predictionStartDate">
-                    </div>
-                    <div style="height: 300px;"><canvas id="predictionChart"></canvas></div>
+            <div class="col-md-4">
+                <div class="card p-3 text-center bg-dark text-white h-100 d-flex justify-content-center flex-column">
+                    <small class="text-white-50">HARGA LIVE SAAT INI</small>
+                    <h2 class="fw-bold mb-0" id="livePriceTicker">Rp 0</h2>
+                    <small id="livePriceChange" class="text-white-50">--</small>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="card p-3 h-100">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Data Historis</h5>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="historicalStartDate" class="form-label small fw-bold text-muted">Dari Tanggal:</label>
-                            <input type="date" class="form-control form-control-sm" id="historicalStartDate">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="historicalEndDate" class="form-label small fw-bold text-muted">Sampai Tanggal:</label>
-                            <input type="date" class="form-control form-control-sm" id="historicalEndDate">
-                        </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card p-3 border-start border-4 border-warning">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-cloud-sun text-warning fa-2x"></i></div>
+                        <div><small class="text-muted fw-bold">CUACA</small><h6 class="mb-0 fw-bold" id="weatherFactor">...</h6></div>
                     </div>
-                    <div style="height: 300px;"><canvas id="historicalChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 border-start border-4 border-info">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-warehouse text-info fa-2x"></i></div>
+                        <div><small class="text-muted fw-bold">STOK GUDANG</small><h6 class="mb-0 fw-bold" id="stockFactor">...</h6></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 border-start border-4 border-success">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-truck text-success fa-2x"></i></div>
+                        <div><small class="text-muted fw-bold">DISTRIBUSI</small><h6 class="mb-0 fw-bold" id="distributionFactor">...</h6></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>Proyeksi AI (30 Hari Kedepan)</h5>
+                    <div style="height: 350px;"><canvas id="predictionChart"></canvas></div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Tren Historis</h5>
+                    <div style="height: 350px;"><canvas id="historicalChart"></canvas></div>
                 </div>
             </div>
         </div>
 
         <div class="card p-4 mb-5">
-            <h5 class="fw-bold mb-4"><i class="fas fa-newspaper me-2 text-danger"></i>Berita Pangan Nasional</h5>
-            <div class="row g-3" id="newsContainer">
-                <p class="text-center text-muted"><i class="fas fa-sync-alt fa-spin me-2"></i>Memuat berita dari Badan Pangan Nasional...</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0"><i class="fas fa-newspaper me-2 text-danger"></i>Kabar Pangan Terkini</h5>
+                <span class="badge bg-secondary">Update: Hari Ini</span>
             </div>
-            <div class="text-center mt-3">
-                <a href="https://panelharga.badanpangan.go.id/berita" target="_blank" class="btn btn-sm btn-outline-danger px-4"><i class="fas fa-external-link-alt me-2"></i>Lihat Semua Berita di Badan Pangan Nasional</a>
-            </div>
-        </div>
-
-        <div class="row mb-4 g-4">
-            <div class="col-lg-6">
-                <div class="card p-3 h-100">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>Prediksi AI (30 Hari)</h5>
-                    <div style="height: 300px;"><canvas id="predictionChart"></canvas></div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card p-3 h-100">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Data Historis</h5>
-                    <div style="height: 300px;"><canvas id="historicalChart"></canvas></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card p-4 mb-5">
-            <h5 class="fw-bold mb-4"><i class="fas fa-newspaper me-2 text-danger"></i>Berita Pangan Nasional</h5>
-            <div class="row g-3" id="newsContainer">
-                </div>
+            <div class="row g-3" id="newsContainer"></div>
         </div>
     </main>
 
     <footer class="text-center">
-        <div class="container"><p class="mb-0">&copy; 2025 Komoditas Indonesia.</p></div>
+        <div class="container"><p class="mb-0 small">&copy; 2025 Komoditas Indonesia. All rights reserved.</p></div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         $(document).ready(function() {
-            // --- DATA LOGIC ---
-            const dataBase = {
-                beras: { min: 12500, max: 14000, f: { w: "Cerah (Panen)", s: "Surplus 15%", d: "Lancar" } },
-                cabai: { min: 35000, max: 55000, f: { w: "Hujan Ekstrem", s: "Menipis", d: "Terhambat" } },
-                bawang: { min: 28000, max: 42000, f: { w: "Berawan", s: "Cukup", d: "Normal" } },
-                minyak: { min: 14000, max: 16500, f: { w: "Normal", s: "Aman", d: "Operasi Pasar" } },
-                gula: { min: 16000, max: 18000, f: { w: "Musim Giling", s: "Impor Masuk", d: "Lancar" } },
-                telur: { min: 27000, max: 32000, f: { w: "Panas", s: "Pakan Naik", d: "Lancar" } },
-                daging: { min: 35000, max: 40000, f: { w: "Normal", s: "Stabil", d: "Lancar" } }
+            // 1. DATASET PINTAR
+            const db = {
+                beras: { base: 13500, min: 13000, max: 14000, f: {w:"Cerah (Panen Raya)", s:"Surplus 15%", d:"Lancar Jaya"} },
+                cabai: { base: 45000, min: 35000, max: 55000, f: {w:"Hujan Ekstrem", s:"Menipis", d:"Terhambat"} },
+                bawang: { base: 32000, min: 28000, max: 38000, f: {w:"Berawan", s:"Cukup", d:"Normal"} },
+                minyak: { base: 15000, min: 14000, max: 16000, f: {w:"Normal", s:"Aman (DMO)", d:"Operasi Pasar"} },
+                gula: { base: 17000, min: 16000, max: 18000, f: {w:"Kering", s:"Impor Masuk", d:"Lancar"} },
+                telur: { base: 29000, min: 27000, max: 32000, f: {w:"Panas", s:"Pakan Mahal", d:"Stabil"} },
+                daging: { base: 38000, min: 35000, max: 42000, f: {w:"Normal", s:"Stabil", d:"Lancar"} }
             };
 
-            // --- RENDER BERITA (Pakai Ikon) ---
-            const news = [
-                { t: "Stok Beras Aman Jelang Idul Adha", s: "Bapanas", i: "fa-bowl-rice", c: "bg-success" },
-                { t: "Operasi Pasar Minyak Goreng", s: "Info Pangan", i: "fa-bottle-droplet", c: "bg-warning" },
-                { t: "Harga Cabai Turun di Jawa", s: "Pertanian", i: "fa-pepper-hot", c: "bg-danger" },
-                { t: "Digitalisasi Rantai Pasok Telur", s: "Teknologi", i: "fa-egg", c: "bg-info" }
-            ];
-            
-            $('#newsContainer').html(news.map(n => `
-                <div class="col-md-3">
-                    <div class="card h-100 border hover-shadow">
-                        <div class="${n.c} text-white d-flex align-items-center justify-content-center" style="height: 100px;">
-                            <i class="fas ${n.i} fa-3x opacity-75"></i>
-                        </div>
-                        <div class="card-body p-3">
-                            <span class="badge bg-secondary mb-2">${n.s}</span>
-                            <h6 class="fw-bold" style="font-size: 14px;">${n.t}</h6>
-                        </div>
-                    </div>
-                </div>
-            `).join(''));
+            let pChart, hChart, liveInterval;
+            let currentPrice = 0;
 
-            // --- CHART LOGIC ---
-            let pChart, hChart;
-            function loadData(k) {
-                const d = dataBase[k];
+            // 2. LIVE SIMULATION LOGIC
+            function startLiveTicker(commodity) {
+                clearInterval(liveInterval);
+                let price = db[commodity].base;
+                currentPrice = price;
+                
+                // Update pertama
+                updateTickerDisplay(price, 0);
+
+                // Update tiap 3 detik (Efek Live Trade)
+                liveInterval = setInterval(() => {
+                    const change = Math.floor(Math.random() * 200) - 100; // Fluktuasi -100 smp +100
+                    const newPrice = currentPrice + change;
+                    updateTickerDisplay(newPrice, change);
+                    currentPrice = newPrice;
+                }, 3000);
+            }
+
+            function updateTickerDisplay(price, change) {
+                const elPrice = $('#livePriceTicker');
+                const elChange = $('#livePriceChange');
+                
+                elPrice.text(`Rp ${price.toLocaleString('id-ID')}`);
+                
+                if(change > 0) {
+                    elPrice.removeClass('price-down').addClass('price-up');
+                    elChange.html(`<i class="fas fa-caret-up"></i> +${change}`).removeClass('text-danger').addClass('text-success');
+                } else if(change < 0) {
+                    elPrice.removeClass('price-up').addClass('price-down');
+                    elChange.html(`<i class="fas fa-caret-down"></i> ${change}`).removeClass('text-success').addClass('text-danger');
+                }
+                
+                // Remove animation class after 1s
+                setTimeout(() => elPrice.removeClass('price-up price-down'), 1000);
+            }
+
+            // 3. CHART & DATA LOADER
+            function loadData(comm) {
+                const d = db[comm];
                 $('#weatherFactor').text(d.f.w);
                 $('#stockFactor').text(d.f.s);
                 $('#distributionFactor').text(d.f.d);
 
-                const labels = Array.from({length:30}, (_,i)=>`Hari ${i+1}`);
-                const pData = Array.from({length:30}, ()=>Math.floor(d.min+Math.random()*(d.max-d.min)));
-                const hData = Array.from({length:30}, ()=>Math.floor(d.min+Math.random()*(d.max-d.min)));
+                // Start Live Ticker
+                startLiveTicker(comm);
 
+                // Data Generation
+                const labels = Array.from({length:30}, (_,i)=>`H-${30-i}`);
+                const pLabels = Array.from({length:30}, (_,i)=>`H+${i+1}`);
+                
+                const hData = Array.from({length:30}, () => d.base + Math.floor(Math.random() * 1000 - 500));
+                const pData = Array.from({length:30}, () => d.base + Math.floor(Math.random() * 2000 - 1000));
+
+                // Render Charts
                 if(pChart) pChart.destroy();
                 if(hChart) hChart.destroy();
 
-                pChart = new Chart(document.getElementById('predictionChart'), {
+                // Prediksi Chart (Line)
+                const ctxP = document.getElementById('predictionChart').getContext('2d');
+                let grad = ctxP.createLinearGradient(0,0,0,400);
+                grad.addColorStop(0, 'rgba(13, 110, 253, 0.2)');
+                grad.addColorStop(1, 'rgba(13, 110, 253, 0)');
+
+                pChart = new Chart(ctxP, {
                     type: 'line',
-                    data: { labels, datasets: [{ label:'Prediksi', data:pData, borderColor:'#0d6efd', backgroundColor:'rgba(13,110,253,0.1)', fill:true }] },
-                    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
+                    data: { labels: pLabels, datasets: [{ label:'AI Forecast', data:pData, borderColor:'#0d6efd', backgroundColor:grad, fill:true, tension:0.4 }] },
+                    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{intersect:false, mode:'index'} }
                 });
-                
+
+                // Historis Chart (Bar)
                 hChart = new Chart(document.getElementById('historicalChart'), {
                     type: 'bar',
-                    data: { labels, datasets: [{ label:'Historis', data:hData, backgroundColor:'#198754' }] },
+                    data: { labels: labels, datasets: [{ label:'Realisasi', data:hData, backgroundColor:'#198754', borderRadius:2 }] },
                     options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} }
                 });
             }
 
-            // --- EVENT ---
-            $('#commoditySelect').change(function() { loadData(this.value); });
-            $('#downloadData').click(function() {
-                Swal.fire({ title:'Mengunduh...', timer:1500, didOpen:()=>Swal.showLoading() })
-                .then(() => Swal.fire('Sukses', 'Laporan tersimpan di perangkat.', 'success'));
+            // 4. BERITA (Icon Based - Anti Broken)
+            const news = [
+                {t:"Stok Beras Nasional Aman 6 Bulan", s:"Bapanas", i:"fa-bowl-rice", c:"bg-success"},
+                {t:"Operasi Pasar Minyak Goreng Murah", s:"Info Pangan", i:"fa-bottle-droplet", c:"bg-warning"},
+                {t:"Panen Raya Cabai di Jawa Timur", s:"Pertanian", i:"fa-pepper-hot", c:"bg-danger"},
+                {t:"Digitalisasi Rantai Pasok Telur", s:"Teknologi", i:"fa-egg", c:"bg-info"}
+            ];
+            
+            $('#newsContainer').html(news.map(n => `
+                <div class="col-md-3">
+                    <div class="card h-100 border shadow-sm">
+                        <div class="${n.c} text-white d-flex align-items-center justify-content-center" style="height: 100px;">
+                            <i class="fas ${n.i} fa-3x opacity-75"></i>
+                        </div>
+                        <div class="card-body p-3">
+                            <span class="badge bg-light text-dark border mb-2">${n.s}</span>
+                            <h6 class="fw-bold text-dark" style="font-size: 14px;">${n.t}</h6>
+                        </div>
+                    </div>
+                </div>`).join(''));
+
+            // Events
+            $('#commoditySelect').change(function(){ loadData(this.value); });
+            $('#downloadData').click(function(){ 
+                Swal.fire({title:'Mengunduh Excel...', timer:1500, didOpen:()=>Swal.showLoading()}).then(()=>Swal.fire('Sukses', 'Laporan tersimpan.', 'success')); 
             });
 
             // Init
@@ -202,6 +246,4 @@
         });
     </script>
 </body>
-
 </html>
-

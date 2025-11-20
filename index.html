@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda - Komoditas Indonesia 2025</title>
+    <title>Beranda - KPDI 2025</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -12,10 +12,8 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-chart-line me-2"></i>Komoditas Indonesia</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="navbar-brand fw-bold" href="index.html"><i class="fas fa-chart-line me-2"></i>KPDI 2025</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="index.html">Beranda</a></li>
@@ -28,93 +26,63 @@
         </div>
     </nav>
 
-    <main class="container">
+    <main>
         <section class="hero-section text-center">
-            <h1 class="display-4 fw-bold mb-3">Ketahanan Pangan Digital 2025</h1>
-            <p class="lead mb-4">Platform cerdas berbasis data untuk stabilitas ekonomi nasional.</p>
-            <div>
-                <a href="dashboard.html" class="btn btn-warning btn-lg me-3"><i class="fas fa-chart-area me-2"></i>Dashboard Analisis</a>
-                <a href="lapor.html" class="btn btn-light btn-lg"><i class="fas fa-plus me-2"></i>Lapor Harga</a>
+            <div class="container">
+                <h1 class="display-3 fw-bold mb-3">Ketahanan Pangan Digital</h1>
+                <p class="lead mb-4">Platform monitoring harga pangan nasional berbasis data cerdas.</p>
+                <a href="dashboard.html" class="btn btn-warning btn-lg me-3 shadow"><i class="fas fa-chart-line me-2"></i>Monitoring Live</a>
+                <a href="lapor.html" class="btn btn-light btn-lg shadow"><i class="fas fa-edit me-2"></i>Lapor Harga</a>
             </div>
         </section>
 
-        <section class="mb-5">
+        <section class="container py-5">
+            <h3 class="text-center fw-bold mb-4">Indikator Utama Hari Ini</h3>
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="card p-4 text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-chart-pie text-primary fa-3x mb-3"></i>
-                            <h4 class="fw-bold">Inflasi Pangan</h4>
-                            <h2 class="text-primary fw-extra-bold">3.5%</h2>
-                            <p class="text-muted small">Terkendali (Target 2025)</p>
-                        </div>
+                    <div class="card p-4 text-center">
+                        <i class="fas fa-percentage text-primary fa-3x mb-3"></i>
+                        <h5>Inflasi Pangan</h5>
+                        <h2 class="fw-bold text-primary">3.5%</h2>
+                        <small class="text-muted">Terkendali (YoY)</small>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card p-4 text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-tags text-success fa-3x mb-3"></i>
-                            <h4 class="fw-bold">Harga Beras</h4>
-                            <h2 class="text-success fw-extra-bold">Rp 13.500</h2>
-                            <p class="text-muted small">Stabil di Pasar Induk</p>
-                        </div>
+                    <div class="card p-4 text-center">
+                        <i class="fas fa-tags text-success fa-3x mb-3"></i>
+                        <h5>Rata-rata Beras</h5>
+                        <h2 class="fw-bold text-success">Rp 13.500</h2>
+                        <small class="text-muted">Stabil Nasional</small>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card p-4 text-center h-100">
-                        <div class="card-body">
-                            <i class="fas fa-exclamation-circle text-danger fa-3x mb-3"></i>
-                            <h4 class="fw-bold">Waspada</h4>
-                            <h2 class="text-danger fw-extra-bold">Cabai</h2>
-                            <p class="text-muted small">Tren Kenaikan 5%</p>
-                        </div>
+                    <div class="card p-4 text-center">
+                        <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                        <h5>Waspada</h5>
+                        <h2 class="fw-bold text-danger">Cabai</h2>
+                        <small class="text-muted">Tren Kenaikan 5%</small>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="mb-5">
-            <div class="card p-4">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold">Peta Persebaran Harga Nasional</h3>
-                    <p class="text-muted">Pantauan real-time dari Sabang sampai Merauke</p>
-                </div>
+        <section class="container mb-5">
+            <div class="card p-1">
                 <div id="map"></div>
             </div>
         </section>
     </main>
 
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 Komoditas Indonesia. Hak Cipta Dilindungi.</p>
-        </div>
-    </footer>
+    <footer class="text-center"><div class="container"><p class="mb-0">&copy; 2025 Komoditas Indonesia.</p></div></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi Peta
-            var map = L.map('map').setView([-0.7893, 113.9213], 5);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
-
-            // Data Lokasi
-            var locations = [
-                { lat: -6.2088, lng: 106.8456, city: "Jakarta", status: "Tinggi (Defisit)", color: "red" },
-                { lat: -7.2575, lng: 112.7521, city: "Surabaya", status: "Stabil", color: "green" },
-                { lat: 3.5952, lng: 98.6722, city: "Medan", status: "Surplus", color: "blue" },
-                { lat: -5.1477, lng: 119.4328, city: "Makassar", status: "Stabil", color: "green" }
-            ];
-
-            locations.forEach(function(loc) {
-                // Menggunakan icon standar (karena custom icon butuh url gambar)
-                L.marker([loc.lat, loc.lng]).addTo(map)
-                    .bindPopup(`<b>${loc.city}</b><br>Status: ${loc.status}`);
-            });
-        });
+        var map = L.map('map').setView([-0.7893, 113.9213], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'&copy; OSM'}).addTo(map);
+        L.marker([-6.2, 106.8]).addTo(map).bindPopup("<b>Jakarta</b><br>Status: Waspada").openPopup();
+        L.marker([-7.2, 112.7]).addTo(map).bindPopup("<b>Surabaya</b><br>Status: Aman");
+        L.marker([3.5, 98.6]).addTo(map).bindPopup("<b>Medan</b><br>Status: Surplus");
     </script>
 </body>
-
 </html>
