@@ -7,6 +7,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS Tambahan Khusus Link Berita */
+        .news-link {
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block; /* Agar seluruh area bisa diklik */
+            height: 100%;
+        }
+        .news-link:hover .card {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+            border-color: #0d6efd !important;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
@@ -63,7 +78,7 @@
 
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-warning">
+                <div class="card p-3 border-start border-4 border-warning h-100">
                     <div class="d-flex align-items-center">
                         <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-cloud-sun text-warning fa-2x"></i></div>
                         <div><small class="text-muted fw-bold">CUACA</small><h6 class="mb-0 fw-bold" id="weatherFactor">...</h6></div>
@@ -71,7 +86,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-info">
+                <div class="card p-3 border-start border-4 border-info h-100">
                     <div class="d-flex align-items-center">
                         <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-warehouse text-info fa-2x"></i></div>
                         <div><small class="text-muted fw-bold">STOK GUDANG</small><h6 class="mb-0 fw-bold" id="stockFactor">...</h6></div>
@@ -79,7 +94,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-success">
+                <div class="card p-3 border-start border-4 border-success h-100">
                     <div class="d-flex align-items-center">
                         <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-truck text-success fa-2x"></i></div>
                         <div><small class="text-muted fw-bold">DISTRIBUSI</small><h6 class="mb-0 fw-bold" id="distributionFactor">...</h6></div>
@@ -106,7 +121,7 @@
         <div class="card p-4 mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold m-0"><i class="fas fa-newspaper me-2 text-danger"></i>Kabar Pangan Terkini</h5>
-                <span class="badge bg-secondary">Update: Hari Ini</span>
+                <a href="https://badanpangan.go.id/berita" target="_blank" class="btn btn-sm btn-outline-secondary">Lihat Semua <i class="fas fa-external-link-alt ms-1"></i></a>
             </div>
             <div class="row g-3" id="newsContainer"></div>
         </div>
@@ -125,7 +140,7 @@
         $(document).ready(function() {
             // 1. DATASET PINTAR
             const db = {
-                beras: { base: 13500, min: 13000, max: 14000, f: {w:"Cerah (Panen)", s:"Surplus 15%", d:"Lancar"} },
+                beras: { base: 13500, min: 13000, max: 14000, f: {w:"Cerah (Panen Raya)", s:"Surplus 15%", d:"Lancar Jaya"} },
                 cabai: { base: 45000, min: 35000, max: 55000, f: {w:"Hujan Ekstrem", s:"Menipis", d:"Terhambat"} },
                 bawang: { base: 32000, min: 28000, max: 38000, f: {w:"Berawan", s:"Cukup", d:"Normal"} },
                 minyak: { base: 15000, min: 14000, max: 16000, f: {w:"Normal", s:"Aman (DMO)", d:"Operasi Pasar"} },
@@ -142,13 +157,10 @@
                 clearInterval(liveInterval);
                 let price = db[commodity].base;
                 currentPrice = price;
-                
-                // Update pertama
                 updateTickerDisplay(price, 0);
 
-                // Update tiap 3 detik (Efek Live Trade)
                 liveInterval = setInterval(() => {
-                    const change = Math.floor(Math.random() * 200) - 100; // Fluktuasi -100 smp +100
+                    const change = Math.floor(Math.random() * 200) - 100; 
                     const newPrice = currentPrice + change;
                     updateTickerDisplay(newPrice, change);
                     currentPrice = newPrice;
@@ -158,7 +170,6 @@
             function updateTickerDisplay(price, change) {
                 const elPrice = $('#livePriceTicker');
                 const elChange = $('#livePriceChange');
-                
                 elPrice.text(`Rp ${price.toLocaleString('id-ID')}`);
                 
                 if(change > 0) {
@@ -168,8 +179,6 @@
                     elPrice.removeClass('price-up').addClass('price-down');
                     elChange.html(`<i class="fas fa-caret-down"></i> ${change}`).removeClass('text-success').addClass('text-danger');
                 }
-                
-                // Remove animation class after 1s
                 setTimeout(() => elPrice.removeClass('price-up price-down'), 1000);
             }
 
@@ -180,21 +189,16 @@
                 $('#stockFactor').text(d.f.s);
                 $('#distributionFactor').text(d.f.d);
 
-                // Start Live Ticker
                 startLiveTicker(comm);
 
-                // Data Generation
                 const labels = Array.from({length:30}, (_,i)=>`H-${30-i}`);
                 const pLabels = Array.from({length:30}, (_,i)=>`H+${i+1}`);
-                
                 const hData = Array.from({length:30}, () => d.base + Math.floor(Math.random() * 1000 - 500));
                 const pData = Array.from({length:30}, () => d.base + Math.floor(Math.random() * 2000 - 1000));
 
-                // Render Charts
                 if(pChart) pChart.destroy();
                 if(hChart) hChart.destroy();
 
-                // Prediksi Chart (Line)
                 const ctxP = document.getElementById('predictionChart').getContext('2d');
                 let grad = ctxP.createLinearGradient(0,0,0,400);
                 grad.addColorStop(0, 'rgba(13, 110, 253, 0.2)');
@@ -206,7 +210,6 @@
                     options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{intersect:false, mode:'index'} }
                 });
 
-                // Historis Chart (Bar)
                 hChart = new Chart(document.getElementById('historicalChart'), {
                     type: 'bar',
                     data: { labels: labels, datasets: [{ label:'Realisasi', data:hData, backgroundColor:'#198754', borderRadius:2 }] },
@@ -214,25 +217,28 @@
                 });
             }
 
-            // 4. BERITA (Icon Based - Anti Broken)
+            // 4. BERITA (Icon Based & CLICKABLE)
             const news = [
-                {t:"Stok Beras Nasional Aman 6 Bulan", s:"Bapanas", i:"fa-bowl-rice", c:"bg-success"},
-                {t:"Operasi Pasar Minyak Goreng Murah", s:"Info Pangan", i:"fa-bottle-droplet", c:"bg-warning"},
-                {t:"Panen Raya Cabai di Jawa Timur", s:"Pertanian", i:"fa-pepper-hot", c:"bg-danger"},
-                {t:"Digitalisasi Rantai Pasok Telur", s:"Teknologi", i:"fa-egg", c:"bg-info"}
+                {t:"Stok Beras Nasional Aman 6 Bulan", s:"Badan Pangan Nasional", i:"fa-bowl-rice", c:"bg-success", u:"https://badanpangan.go.id/berita"},
+                {t:"Operasi Pasar Minyak Goreng Murah", s:"Info Pangan Jakarta", i:"fa-bottle-droplet", c:"bg-warning", u:"https://infopangan.jakarta.go.id/"},
+                {t:"Panen Raya Cabai di Jawa Timur", s:"Kementerian Pertanian", i:"fa-pepper-hot", c:"bg-danger", u:"https://www.pertanian.go.id/"},
+                {t:"Digitalisasi Rantai Pasok Telur", s:"Teknologi Pangan", i:"fa-egg", c:"bg-info", u:"https://badanpangan.go.id/"}
             ];
             
             $('#newsContainer').html(news.map(n => `
                 <div class="col-md-3">
-                    <div class="card h-100 border shadow-sm">
-                        <div class="${n.c} text-white d-flex align-items-center justify-content-center" style="height: 100px;">
-                            <i class="fas ${n.i} fa-3x opacity-75"></i>
+                    <a href="${n.u}" target="_blank" class="news-link">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="${n.c} text-white d-flex align-items-center justify-content-center" style="height: 100px;">
+                                <i class="fas ${n.i} fa-3x opacity-75"></i>
+                            </div>
+                            <div class="card-body p-3">
+                                <span class="badge bg-light text-dark border mb-2">${n.s}</span>
+                                <h6 class="fw-bold text-dark" style="font-size: 14px;">${n.t}</h6>
+                                <small class="text-muted"><i class="fas fa-external-link-alt me-1"></i> Baca Selengkapnya</small>
+                            </div>
                         </div>
-                        <div class="card-body p-3">
-                            <span class="badge bg-light text-dark border mb-2">${n.s}</span>
-                            <h6 class="fw-bold text-dark" style="font-size: 14px;">${n.t}</h6>
-                        </div>
-                    </div>
+                    </a>
                 </div>`).join(''));
 
             // Events
@@ -246,6 +252,4 @@
         });
     </script>
 </body>
-
 </html>
-
