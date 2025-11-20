@@ -56,24 +56,44 @@
             </div>
         </div>
 
-        <div class="row mb-4 g-3">
-            <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-warning h-100">
-                    <small class="text-muted text-uppercase fw-bold">Cuaca</small>
-                    <h5 class="fw-bold mb-0 mt-1" id="weatherFactor">Memuat...</h5>
+<div class="row mb-4 g-4">
+            <div class="col-lg-6">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-robot me-2 text-primary"></i>Prediksi AI (30 Hari)</h5>
+                    
+                    <div class="mb-3">
+                        <label for="predictionStartDate" class="form-label small fw-bold text-muted">Mulai Prediksi:</label>
+                        <input type="date" class="form-control form-control-sm" id="predictionStartDate">
+                    </div>
+                    <div style="height: 300px;"><canvas id="predictionChart"></canvas></div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-info h-100">
-                    <small class="text-muted text-uppercase fw-bold">Stok Gudang</small>
-                    <h5 class="fw-bold mb-0 mt-1" id="stockFactor">Memuat...</h5>
+            <div class="col-lg-6">
+                <div class="card p-3 h-100">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Data Historis</h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="historicalStartDate" class="form-label small fw-bold text-muted">Dari Tanggal:</label>
+                            <input type="date" class="form-control form-control-sm" id="historicalStartDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="historicalEndDate" class="form-label small fw-bold text-muted">Sampai Tanggal:</label>
+                            <input type="date" class="form-control form-control-sm" id="historicalEndDate">
+                        </div>
+                    </div>
+                    <div style="height: 300px;"><canvas id="historicalChart"></canvas></div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card p-3 border-start border-4 border-success h-100">
-                    <small class="text-muted text-uppercase fw-bold">Distribusi</small>
-                    <h5 class="fw-bold mb-0 mt-1" id="distributionFactor">Memuat...</h5>
-                </div>
+        </div>
+
+        <div class="card p-4 mb-5">
+            <h5 class="fw-bold mb-4"><i class="fas fa-newspaper me-2 text-danger"></i>Berita Pangan Nasional</h5>
+            <div class="row g-3" id="newsContainer">
+                <p class="text-center text-muted"><i class="fas fa-sync-alt fa-spin me-2"></i>Memuat berita dari Badan Pangan Nasional...</p>
+            </div>
+            <div class="text-center mt-3">
+                <a href="https://panelharga.badanpangan.go.id/berita" target="_blank" class="btn btn-sm btn-outline-danger px-4"><i class="fas fa-external-link-alt me-2"></i>Lihat Semua Berita di Badan Pangan Nasional</a>
             </div>
         </div>
 
@@ -184,3 +204,4 @@
 </body>
 
 </html>
+
